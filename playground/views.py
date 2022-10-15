@@ -1,18 +1,24 @@
+from genericpath import exists
+from turtle import title
 from django.shortcuts import render
 from django.http import HttpResponse
+from django.core.exceptions import ObjectDoesNotExist
+from django.db.models import Q, F
+from store.models import Product, OrderItem
+from store.models import OrderItem
+
 
 # Create your views here.
 # request -> responce (takes request and return responce)
 # request handler
-
-def calculate():
-    x = 1
-    y = 2
-    return x
-    
+ 
 def say_hello(request):
     #pull data from db
     #transform 
     #send email
-    x=calculate()
-    return render(request, 'hello.html',{'name':'Yuvraj'})
+    query_set = Product.objects.filter(id__in = OrderItem.objects.values('product_id').distinct()).order_by('title')
+    # print(query_set)
+    # query_set = Product.objects.
+    # query_set = OrderItem.objects.values('product_id')
+
+    return render(request, 'hello.html',{'name':'Yuvraj', 'products': list(query_set)})
