@@ -23,6 +23,11 @@ class InventoryFilter(admin.SimpleListFilter):
 # Register your models here.
 @admin.register(models.Product)
 class ProductAdmin(admin.ModelAdmin):
+    autocomplete_fields = ['collection']
+    prepopulated_fields = {
+        'slug': ['title']
+    }
+    exclude = ['promotions']
     actions = ['clear_inventory']
     list_display = ['title', 'unit_price', 'inventory_status', 'collection_title']
     list_editable = ['unit_price']
@@ -52,6 +57,7 @@ class ProductAdmin(admin.ModelAdmin):
 @admin.register(models.Collection)
 class CollectionAdmin(admin.ModelAdmin):
     list_display = ['title','products_count']
+    search_fields = ['title']
     @admin.display(ordering='products_count')
     def products_count(self, collection):
         url = (
@@ -70,6 +76,7 @@ class CollectionAdmin(admin.ModelAdmin):
 
 @admin.register(models.Customer)
 class CustomerAdmin(admin.ModelAdmin):
+    search_fields = ['first_name','last_name']
     list_display = ['first_name', 'last_name', 'membership','orders']
     list_editable = ['membership']
     list_per_page = 10
@@ -94,6 +101,7 @@ class CustomerAdmin(admin.ModelAdmin):
 
 @admin.register(models.Order)
 class OrderAdmin(admin.ModelAdmin):
+    autocomplete_fields = ['customer']
     list_display = ['id','placed_at','customer']
 
 # admin.site.register(models.OrderItem)
