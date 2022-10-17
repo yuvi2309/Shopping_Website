@@ -1,6 +1,9 @@
 from itertools import count
 from typing import Counter
 from django.contrib import admin, messages
+from django.contrib.contenttypes.admin import GenericTabularInline
+
+from tags.models import TaggedItem
 from . import models
 from django.db.models import Count
 from django.utils.html import format_html, urlencode
@@ -21,6 +24,11 @@ class InventoryFilter(admin.SimpleListFilter):
             return queryset.filter(inventory__lt=10)
 
 # Register your models here.
+
+class TagInline(GenericTabularInline):
+    autocomplete_fields = ['tag']
+    model = TaggedItem
+
 @admin.register(models.Product)
 class ProductAdmin(admin.ModelAdmin):
     autocomplete_fields = ['collection']
@@ -28,6 +36,7 @@ class ProductAdmin(admin.ModelAdmin):
         'slug': ['title']
     }
     exclude = ['promotions']
+    inlines = [TagInline]
     actions = ['clear_inventory']
     list_display = ['title', 'unit_price', 'inventory_status', 'collection_title']
     list_editable = ['unit_price']
@@ -58,6 +67,7 @@ class ProductAdmin(admin.ModelAdmin):
 class CollectionAdmin(admin.ModelAdmin):
     list_display = ['title','products_count']
     search_fields = ['title']
+
     @admin.display(ordering='products_count')
     def products_count(self, collection):
         url = (
@@ -98,14 +108,14 @@ class CustomerAdmin(admin.ModelAdmin):
             orders_count = Count('order')
         )
 
+class OrderItemInline(admin.TabularInline):
+    autocomplete_fields = ['product']
+    min_num = 1
+    max_num = 10
+    model = models.OrderItem
+    extra = 0
 
 @admin.register(models.Order)
 class OrderAdmin(admin.ModelAdmin):
     autocomplete_fields = ['customer']
     list_display = ['id','placed_at','customer']
-
-# admin.site.register(models.OrderItem)
-# admin.site.register(models.Collection)
-# admin.site.register(models.Collection)
-# admin.site.register(models.Collection)
-
