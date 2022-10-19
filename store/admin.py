@@ -65,7 +65,7 @@ class ProductAdmin(admin.ModelAdmin):
 
 @admin.register(models.Collection)
 class CollectionAdmin(admin.ModelAdmin):
-    list_display = ['title','products_count']
+    list_display = ['id','title','products_count']
     search_fields = ['title']
 
     @admin.display(ordering='products_count')
@@ -81,7 +81,7 @@ class CollectionAdmin(admin.ModelAdmin):
 
     def get_queryset(self, request):
         return super().get_queryset(request).annotate(
-            products_count = Count('product')
+            products_count = Count('products')
         )
 
 @admin.register(models.Customer)
