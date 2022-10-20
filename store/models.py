@@ -2,6 +2,7 @@ from statistics import mode
 from termios import OFDEL
 from tkinter import CASCADE
 from unittest.mock import DEFAULT
+from unittest.util import _MAX_LENGTH
 from wsgiref.validate import validator
 from django.db import models
 from django.core.validators import MinValueValidator
@@ -102,3 +103,9 @@ class CartItem(models.Model):
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
 
+class Review(models.Model):
+    product = models.ForeignKey(Product,on_delete=models.CASCADE, related_name='reviews')
+    name = models.CharField(max_length = 255)
+    description = models.TextField()
+    date = models.DateField(auto_now_add = True)
+    
