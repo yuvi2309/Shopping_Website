@@ -6,6 +6,7 @@ from unittest.util import _MAX_LENGTH
 from wsgiref.validate import validator
 from django.db import models
 from django.core.validators import MinValueValidator
+from uuid import uuid4
 
 class Promotion(models.Model):
     description = models.CharField(max_length=255)
@@ -96,12 +97,17 @@ class Address(models.Model):
     zip = models.PositiveBigIntegerField()
 
 class Cart(models.Model):
+    id = models.UUIDField(primary_key =True, default=uuid4)
     created_at = models.DateTimeField(auto_now_add=True)
 
 class CartItem(models.Model):
-    cart = models.ForeignKey(Cart, on_delete=models.CASCADE)
+    cart = models.ForeignKey(
+        Cart, on_delete=models.CASCADE, related_name = 'items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()
+
+    class Meta:
+        unique_together = [['cart','product']]
 
 class Review(models.Model):
     product = models.ForeignKey(Product,on_delete=models.CASCADE, related_name='reviews')
