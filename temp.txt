@@ -1,5 +1,0 @@
-migrations.RunSQL(
-    """
-    insert into store_customer (id, first_name, last_name, email, phone, birth_date, membership) 
-    values (1, 'Dusty', 'Acosta', 'dacosta0@google.pl', '478-322-8439', '2021-10-13', 'G');
-    """)
