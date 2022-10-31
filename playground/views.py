@@ -16,9 +16,8 @@ def say_hello(request):
     #pull data from db
     #transform 
     #send email
-    query_set = Product.objects.filter(id__in = OrderItem.objects.values('product_id').distinct()).order_by('title')
     # print(query_set)
     # query_set = Product.objects.
     # query_set = OrderItem.objects.values('product_id')
 
-    return render(request, 'hello.html',{'name':'Yuvraj', 'products': list(query_set)})
+    return render(request, 'hello.html',{'name':'Yuvraj'})

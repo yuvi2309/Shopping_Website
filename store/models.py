@@ -4,8 +4,8 @@ from tkinter import CASCADE
 from unittest.mock import DEFAULT
 from unittest.util import _MAX_LENGTH
 from wsgiref.validate import validator
-from django.db import models
 from django.core.validators import MinValueValidator
+from django.db import models
 from uuid import uuid4
 
 class Promotion(models.Model):
@@ -36,7 +36,8 @@ class Product(models.Model):
         validators = [MinValueValidator(0)]
     )
     last_update = models.DateTimeField(auto_now=True)
-    collection = models.ForeignKey(Collection,on_delete=models.PROTECT,related_name='products')
+    collection = models.ForeignKey(
+        Collection,on_delete=models.PROTECT,related_name='products')
     promotions = models.ManyToManyField(Promotion,blank=True)
 
     def __str__(self) -> str:
@@ -61,7 +62,8 @@ class Customer(models.Model):
     email = models.EmailField(unique=True)
     phone = models.CharField(max_length=255)
     birth_date = models.DateField(null=True)
-    membership = models.CharField(max_length=1, choices=MEMBERSHIP_CHOICES, default='MEMBERSHIP_BRONZE') 
+    membership = models.CharField(
+        max_length=1, choices=MEMBERSHIP_CHOICES, default='MEMBERSHIP_BRONZE') 
 
     def __str__(self) -> str:
         return f'{self.first_name} {self.last_name}'
@@ -80,12 +82,14 @@ class Order(models.Model):
     ]
 
     placed_at = models.DateTimeField(auto_now_add=True)
-    payment_status = models.CharField(max_length=1,choices = PAYMENT_STATUS_CHOICES, default=PAYMENT_STATUS_PENDING)
+    payment_status = models.CharField(
+        max_length=1,choices = PAYMENT_STATUS_CHOICES, default=PAYMENT_STATUS_PENDING)
     customer = models.ForeignKey(Customer,on_delete=models.PROTECT)
 
 class OrderItem(models.Model):
     order = models.ForeignKey(Order, on_delete = models.PROTECT)
-    product = models.ForeignKey(Product, on_delete = models.PROTECT, related_name = 'orderitems')
+    product = models.ForeignKey(
+        Product, on_delete = models.PROTECT, related_name = 'orderitems')
     quantity = models.PositiveSmallIntegerField()
     unit_price = models.DecimalField(max_digits=6,decimal_places=2)
 
@@ -104,13 +108,16 @@ class CartItem(models.Model):
     cart = models.ForeignKey(
         Cart, on_delete=models.CASCADE, related_name = 'items')
     product = models.ForeignKey(Product, on_delete=models.CASCADE)
-    quantity = models.PositiveIntegerField()
+    quantity = models.PositiveIntegerField(
+        validators = [MinValueValidator(1)]
+    )
 
     class Meta:
         unique_together = [['cart','product']]
 
 class Review(models.Model):
-    product = models.ForeignKey(Product,on_delete=models.CASCADE, related_name='reviews')
+    product = models.ForeignKey(
+        Product,on_delete=models.CASCADE, related_name='reviews')
     name = models.CharField(max_length = 255)
     description = models.TextField()
     date = models.DateField(auto_now_add = True)
